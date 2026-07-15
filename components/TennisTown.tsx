@@ -76,38 +76,64 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
           </div>
         </div>
         <div className="town-panel">
-          <strong className="picker-label">Velg kompis</strong>
-          <div className="buddy-grid" role="group" aria-label="Velg kompis">
-            {BUDDIES.map((b) => (
-              <button
-                key={b.name}
-                type="button"
-                className={`buddy-card${b.name === buddy ? " active" : ""}`}
-                aria-pressed={b.name === buddy}
-                onClick={() => pickBuddy(b.name)}
-              >
-                <span className="buddy-card-emoji">{b.emoji}</span>
-                <span className="buddy-card-name">{b.name}</span>
-              </button>
-            ))}
-            {LOCKED_BUDDIES.map((b) => {
-              const open = live && unlocked.has(b.name);
-              return (
-                <button
-                  key={b.name}
-                  type="button"
-                  className={`buddy-card${open ? "" : " locked"}${b.name === buddy ? " active" : ""}`}
-                  aria-pressed={b.name === buddy}
-                  disabled={!open}
-                  title={open ? b.name : `Lås opp med ${b.req} baller`}
-                  onClick={open ? () => pickBuddy(b.name) : undefined}
-                >
-                  <span className="buddy-card-emoji">{open ? b.emoji : "🔒"}</span>
-                  <span className="buddy-card-name">{open ? b.name : `${b.req} 🎾`}</span>
-                </button>
-              );
-            })}
+          <strong className="picker-label">Velg spiller</strong>
+          <div className="buddy-gender-row">
+            <div>
+              <span className="buddy-gender-label">Gutter</span>
+              <div className="buddy-grid">
+                {BUDDIES.filter((b) => ["Lars", "Noah"].includes(b.name)).map((b) => (
+                  <button
+                    key={b.name}
+                    type="button"
+                    className={`buddy-card${b.name === buddy ? " active" : ""}`}
+                    aria-pressed={b.name === buddy}
+                    onClick={() => pickBuddy(b.name)}
+                  >
+                    <span className="buddy-card-emoji">{b.emoji}</span>
+                    <span className="buddy-card-name">{b.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className="buddy-gender-label">Jenter</span>
+              <div className="buddy-grid">
+                {BUDDIES.filter((b) => ["Emma", "Maja"].includes(b.name)).map((b) => (
+                  <button
+                    key={b.name}
+                    type="button"
+                    className={`buddy-card${b.name === buddy ? " active" : ""}`}
+                    aria-pressed={b.name === buddy}
+                    onClick={() => pickBuddy(b.name)}
+                  >
+                    <span className="buddy-card-emoji">{b.emoji}</span>
+                    <span className="buddy-card-name">{b.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
+          {LOCKED_BUDDIES.length > 0 && (
+            <div className="buddy-grid" style={{ marginTop: 10 }}>
+              {LOCKED_BUDDIES.map((b) => {
+                const open = live && unlocked.has(b.name);
+                return (
+                  <button
+                    key={b.name}
+                    type="button"
+                    className={`buddy-card${open ? "" : " locked"}${b.name === buddy ? " active" : ""}`}
+                    aria-pressed={b.name === buddy}
+                    disabled={!open}
+                    title={open ? b.name : `Lås opp med ${b.req} baller`}
+                    onClick={open ? () => pickBuddy(b.name) : undefined}
+                  >
+                    <span className="buddy-card-emoji">{open ? b.emoji : "🔒"}</span>
+                    <span className="buddy-card-name">{open ? b.name : `${b.req} 🎾`}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <strong className="picker-label">Velg utstyr</strong>
           <div className="opts" role="group" aria-label="Velg utstyr">
