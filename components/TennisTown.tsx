@@ -1,32 +1,31 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { BUDDIES, LOCKED_BUDDIES, GEARS, LOCKED_GEARS, buddyEmoji } from "@/lib/buddies";
+import { BUDDIES, LOCKED_BUDDIES, GEAR_ITEMS, LOCKED_GEAR_ITEMS, buddyEmoji } from "@/lib/buddies";
 import { setBuddyGear } from "@/app/ovelser/actions";
+import CharacterAvatar from "./CharacterAvatar";
 
 type LiveChild = {
   childId: string;
   balls: number;
   buddy: string;
   gear: string;
-  unlocked: string[]; // navn (kompis) eller emoji (utstyr) som er låst opp
+  unlocked: string[];
 };
 
-// To moduser: med `child` er den ekte (lagrer valg per barn, viser ekte baller).
-// Uten props er den en demo på landingssiden (lokal lek, låste premier vises som låst).
 export default function TennisTown({ child }: { child?: LiveChild }) {
   const live = !!child;
   const unlocked = new Set(child?.unlocked ?? []);
   const balls = child?.balls ?? 24;
 
   const [buddy, setBuddy] = useState(child?.buddy ?? BUDDIES[0].name);
-  const [gear, setGear] = useState(child?.gear ?? "");
+  const [gear, setGear] = useState(child?.gear ?? "🎾");
   const [bump, setBump] = useState(false);
   const [, startTransition] = useTransition();
 
   function doBump() {
     setBump(true);
-    setTimeout(() => setBump(false), 250);
+    setTimeout(() => setBump(false), 300);
   }
 
   function persist(nextBuddy: string, nextGear: string) {
@@ -51,40 +50,38 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
     persist(buddy, g);
   }
 
+  const boys = BUDDIES.filter((b) => ["Lars", "Noah"].includes(b.name));
+  const girls = BUDDIES.filter((b) => ["Emma", "Maja"].includes(b.name));
+
   return (
     <div className="town">
       <div className="town-grid">
+
+        {/* Scene */}
         <div className="town-stage">
-          <div className="town-scene">
-            <div className="town-balls">
-              <span className="tb tb1">🎾</span>
-              <span className="tb tb2">🎾</span>
-              <span className="tb tb3">🎾</span>
-            </div>
-            <div className={`buddy-wrap${bump ? " bump" : ""}`} aria-live="polite">
-              <div className="buddy-glow" />
-              <div className="buddy-char">
-                {buddyEmoji(buddy)}
-                {gear && <span className="buddy-gear">{gear}</span>}
-              </div>
-              <div className="buddy-shadow" />
-            </div>
+          <div className="town-balls" aria-hidden="true">
+            <span className="tb tb1">🎾</span>
+            <span className="tb tb2">🎾</span>
+            <span className="tb tb3">🎾</span>
+          </div>
+          <div aria-live="polite">
+            <CharacterAvatar emoji={buddyEmoji(buddy)} gear={gear} bump={bump} />
           </div>
           <div className="buddy-name">{buddy}</div>
-          <div className="coins">
-            🎾 <span>{balls}</span> baller
-          </div>
+          <div className="coins">🎾 <span>{balls}</span> baller</div>
         </div>
+
+        {/* Panel */}
         <div className="town-panel">
+
+          {/* Spillervalg */}
           <strong className="picker-label">Velg spiller</strong>
           <div className="buddy-gender-row">
             <div>
               <span className="buddy-gender-label">Gutter</span>
               <div className="buddy-grid">
-                {BUDDIES.filter((b) => ["Lars", "Noah"].includes(b.name)).map((b) => (
-                  <button
-                    key={b.name}
-                    type="button"
+                {boys.map((b) => (
+                  <button key={b.name} type="button"
                     className={`buddy-card${b.name === buddy ? " active" : ""}`}
                     aria-pressed={b.name === buddy}
                     onClick={() => pickBuddy(b.name)}
@@ -98,10 +95,8 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
             <div>
               <span className="buddy-gender-label">Jenter</span>
               <div className="buddy-grid">
-                {BUDDIES.filter((b) => ["Emma", "Maja"].includes(b.name)).map((b) => (
-                  <button
-                    key={b.name}
-                    type="button"
+                {girls.map((b) => (
+                  <button key={b.name} type="button"
                     className={`buddy-card${b.name === buddy ? " active" : ""}`}
                     aria-pressed={b.name === buddy}
                     onClick={() => pickBuddy(b.name)}
@@ -113,14 +108,14 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
               </div>
             </div>
           </div>
+
+          {/* Låste spillere */}
           {LOCKED_BUDDIES.length > 0 && (
             <div className="buddy-grid" style={{ marginTop: 10 }}>
               {LOCKED_BUDDIES.map((b) => {
                 const open = live && unlocked.has(b.name);
                 return (
-                  <button
-                    key={b.name}
-                    type="button"
+                  <button key={b.name} type="button"
                     className={`buddy-card${open ? "" : " locked"}${b.name === buddy ? " active" : ""}`}
                     aria-pressed={b.name === buddy}
                     disabled={!open}
@@ -135,41 +130,40 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
             </div>
           )}
 
-          <strong className="picker-label">Velg utstyr</strong>
-          <div className="opts" role="group" aria-label="Velg utstyr">
-            {GEARS.map((g, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`opt${g === gear ? " active" : ""}`}
-                aria-pressed={g === gear}
-                onClick={() => pickGear(g)}
+          {/* Utstyr */}
+          <strong className="picker-label" style={{ marginTop: 22 }}>Velg utstyr</strong>
+          <div className="gear-grid" role="group" aria-label="Velg utstyr">
+            {GEAR_ITEMS.map((g) => (
+              <button key={g.id} type="button"
+                className={`gear-card${g.emoji === gear ? " active" : ""}`}
+                aria-pressed={g.emoji === gear}
+                onClick={() => pickGear(g.emoji)}
               >
-                {g || "🚫"}
+                <span className="gear-card-emoji">{g.emoji || "🚫"}</span>
+                <span className="gear-card-label">{g.label}</span>
               </button>
             ))}
-            {LOCKED_GEARS.map((g) => {
+            {LOCKED_GEAR_ITEMS.map((g) => {
               const open = live && unlocked.has(g.emoji);
               return (
-                <button
-                  key={g.emoji}
-                  type="button"
-                  className={`opt${open ? "" : " locked"}${g.emoji === gear ? " active" : ""}`}
+                <button key={g.id} type="button"
+                  className={`gear-card${open ? "" : " locked"}${g.emoji === gear ? " active" : ""}`}
                   aria-pressed={g.emoji === gear}
                   disabled={!open}
-                  title={open ? "Utstyr" : `Lås opp med ${g.req} baller`}
+                  title={open ? g.label : `Lås opp med ${g.req} baller`}
                   onClick={open ? () => pickGear(g.emoji) : undefined}
                 >
-                  {g.emoji}
+                  <span className="gear-card-emoji">{open ? g.emoji : "🔒"}</span>
+                  <span className="gear-card-label">{open ? g.label : `${g.req} 🎾`}</span>
                 </button>
               );
             })}
           </div>
 
-          <p style={{ marginTop: 22, color: "var(--muted)", fontWeight: 700, fontSize: "0.9rem" }}>
+          <p style={{ marginTop: 20, color: "var(--muted)", fontWeight: 700, fontSize: "0.9rem" }}>
             {live
-              ? "Nye kompiser og utstyr låses opp automatisk når barnet samler flere baller."
-              : "Prøv det her. I appen låses nye kompiser opp automatisk når barnet samler nok baller."}
+              ? "Nytt utstyr låses opp når barnet samler flere baller."
+              : "Prøv det her. I appen låses nytt utstyr opp automatisk."}
           </p>
         </div>
       </div>

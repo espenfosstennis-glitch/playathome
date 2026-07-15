@@ -192,8 +192,14 @@ a:focus-visible, .btn:focus-visible, .opt:focus-visible, .card:focus-visible, bu
 }
 @keyframes pulse-glow { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.7; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; } }
 
-.buddy-char { font-size: clamp(6rem, 20vw, 10rem); line-height: 1; position: relative; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.3)) drop-shadow(0 0 30px rgba(214,242,78,0.4)); z-index: 1; }
-.buddy-gear { position: absolute; bottom: -4px; right: -14px; font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+/* Character Avatar */
+.avatar-wrap { position: relative; display: inline-flex; flex-direction: column; align-items: center; animation: buddy-float 2.5s ease-in-out infinite; }
+.avatar-wrap.bump { animation: none; transform: translateY(-14px) scale(1.1); transition: transform 0.15s; }
+.avatar-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(214,242,78,0.4) 0%, transparent 70%); animation: pulse-glow 2.5s ease-in-out infinite; pointer-events: none; }
+.avatar-char { font-size: clamp(7rem, 22vw, 11rem); line-height: 1; position: relative; z-index: 1; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.25)); display: block; }
+.avatar-shadow { width: 70px; height: 14px; border-radius: 50%; background: rgba(0,0,0,0.18); filter: blur(5px); margin-top: 2px; }
+.avatar-gear { position: absolute; z-index: 2; line-height: 1; pointer-events: none; }
+.avatar-headband { position: absolute; top: 24%; left: 10%; right: 10%; height: 9%; border-radius: 999px; z-index: 2; opacity: 0.85; pointer-events: none; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
 .buddy-shadow { width: 80px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.2); filter: blur(6px); margin-top: 4px; }
 
 .buddy-name { font-family: var(--font-head); font-weight: 700; font-size: 1.4rem; margin-top: 10px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
@@ -218,6 +224,14 @@ a:focus-visible, .btn:focus-visible, .opt:focus-visible, .card:focus-visible, bu
 .opt.active { border-color: var(--green); background: var(--green-soft); box-shadow: var(--shadow-sm); }
 .opt.locked { opacity: 0.45; cursor: not-allowed; position: relative; }
 .opt.locked::after { content: "🔒"; position: absolute; font-size: 0.8rem; bottom: 2px; right: 3px; }
+
+.gear-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+.gear-card { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; border-radius: 14px; border: 2px solid var(--line); background: var(--cream); cursor: pointer; transition: 0.15s; }
+.gear-card:hover { border-color: var(--ball-deep); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.gear-card.active { border-color: var(--green); background: var(--green-soft); box-shadow: var(--shadow-sm); }
+.gear-card.locked { opacity: 0.45; cursor: not-allowed; }
+.gear-card-emoji { font-size: 1.8rem; line-height: 1; }
+.gear-card-label { font-family: var(--font-head); font-weight: 700; font-size: 0.68rem; color: var(--green-deep); text-align: center; }
 
 /* Method / quote */
 .method { background: var(--green-deep); color: #fff; border-radius: 32px; padding: clamp(30px, 6vw, 64px); position: relative; overflow: hidden; }
