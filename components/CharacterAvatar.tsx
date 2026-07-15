@@ -7,9 +7,9 @@ import KidSVG from "./KidSVG";
 // SVG figur: 100×170px, stage: 180×220px.
 // SVG plassert: bottom:18px, sentrert horisontalt.
 // → SVG-topp: 220-18-170 = 32px fra stage-topp, venstre: 40px
-// Hodenavn i SVG: cx=50, cy=34 (ry=22) → stage-senter (90, 66)
-// Hårtopp (gutt): SVG y≈6 → stage y≈38  |  Øyne: SVG y=34 → stage y=66
-// Høyre hånd: SVG (83,100) → stage (123, 132)
+// Hode: cx=50 cy=36 ry=25 → stage-senter (90, 68) | hårtopp SVG y≈3 → stage y≈35
+// Øyne: SVG y=37 → stage y=69
+// Høyre hånd: SVG (93,109) → stage (133, 141)
 
 type GearPos = {
   top?: number; left?: number; right?: number;
@@ -17,9 +17,9 @@ type GearPos = {
 };
 
 const GEAR_POS: Record<string, GearPos> = {
-  top:  { top: 14,  size: 38, centerX: true },           // caps/sløyfe: på toppen av hodet
-  eyes: { top: 53,  size: 30, centerX: true },           // solbriller: over øynene
-  hand: { top: 118, right: 6, size: 36, rotate: 30 },   // racket: i høyre hånd
+  top:  { top: 13,  size: 38, centerX: true },           // caps/sløyfe: på hårtoppen
+  eyes: { top: 56,  size: 30, centerX: true },           // solbriller: over øynene
+  hand: { top: 120, right: 22, size: 36, rotate: 30 },  // racket: i høyre hånd
 };
 
 const HEADBAND_COLOR: Record<string, string> = {

@@ -209,10 +209,10 @@ a:focus-visible, .btn:focus-visible, .opt:focus-visible, .card:focus-visible, bu
 }
 
 /* Pannebånd: stripe over panna (z-index 3 = foran figuren)
-   SVG-pannekant ≈ stage y=47 | hodebredde ≈ stage x 65–115 */
+   SVG-pannekant ≈ stage y=50 | hodebredde rx=26 → stage x 64–116 */
 .avatar-hb {
   position: absolute;
-  top: 47px; left: 65px; right: 65px;
+  top: 50px; left: 64px; right: 64px;
   height: 12px; border-radius: 999px;
   z-index: 3;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
