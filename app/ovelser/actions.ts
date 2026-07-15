@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { BUDDIES, GEARS } from "@/lib/buddies";
+import { BUDDIES, FREE_GEAR } from "@/lib/buddies";
 import { levelForBalls, unlockedItems } from "@/lib/gamification";
 import { ACTIVE_CHILD_COOKIE } from "./constants";
 
@@ -113,7 +113,7 @@ export async function setBuddyGear(formData: FormData): Promise<void> {
   const available = new Set(unlockedItems(child.balls));
   const defaultBuddy = BUDDIES.some((b) => b.name === buddy);
   const validBuddy = defaultBuddy || available.has(buddy);
-  const defaultGear = GEARS.includes(gear);
+  const defaultGear = FREE_GEAR.some((g) => g.id === gear);
   const validGear = defaultGear || available.has(gear);
 
   const update: { buddy?: string; gear?: string } = {};

@@ -2,7 +2,7 @@
 // TennisTown) og i server actions, så reglene bor ett sted (reuse + samme validering
 // på klient og server). Baller = antall fullføringer (repetisjoner teller, jf. Fase 4).
 
-import { LOCKED_BUDDIES, LOCKED_GEARS } from "./buddies";
+import { LOCKED_BUDDIES, LOCKED_GEAR } from "./buddies";
 
 // Nivånavn må matche check-constrainten på children.level i migrasjon 0001.
 export const LEVELS = [
@@ -33,11 +33,11 @@ export function levelProgress(balls: number): number {
   return Math.max(0, Math.min(100, Math.round(pct)));
 }
 
-// Låste ting som er åpnet ved gitt antall baller. Kompiser lagres på navn ("Løve"),
-// utstyr på emoji ("👑") – samme nøkler som lagres i children.buddy/gear og unlocks.item.
+// Låste ting som er åpnet ved gitt antall baller.
+// Kompiser lagres på navn ("Champion"), utstyr på gear-ID ("racket-red").
 export function unlockedItems(balls: number): string[] {
   const items: string[] = [];
   for (const b of LOCKED_BUDDIES) if (balls >= b.req) items.push(b.name);
-  for (const g of LOCKED_GEARS) if (balls >= g.req) items.push(g.emoji);
+  for (const g of LOCKED_GEAR)    if (balls >= g.req) items.push(g.id);
   return items;
 }
