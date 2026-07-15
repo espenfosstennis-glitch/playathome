@@ -180,27 +180,65 @@ a:focus-visible, .btn:focus-visible, .opt:focus-visible, .card:focus-visible, bu
 .tb3 { bottom: 5%; left: 30%; animation-delay: 2s; }
 @keyframes float-ball { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(180deg); } }
 
-.buddy-wrap { position: relative; display: flex; flex-direction: column; align-items: center; animation: buddy-float 2.5s ease-in-out infinite; }
-.buddy-wrap.bump { animation: none; transform: translateY(-14px) scale(1.12); }
 @keyframes buddy-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-.buddy-glow {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 160px; height: 160px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(214,242,78,0.35) 0%, transparent 70%);
-  animation: pulse-glow 2.5s ease-in-out infinite;
-}
-@keyframes pulse-glow { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.7; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; } }
+@keyframes pulse-glow { 0%,100% { opacity: 0.7; } 50% { opacity: 1; transform: scale(1.12); } }
 
 /* Character Avatar */
-.avatar-wrap { position: relative; display: inline-flex; flex-direction: column; align-items: center; animation: buddy-float 2.5s ease-in-out infinite; }
-.avatar-wrap.bump { animation: none; transform: translateY(-14px) scale(1.1); transition: transform 0.15s; }
-.avatar-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(214,242,78,0.4) 0%, transparent 70%); animation: pulse-glow 2.5s ease-in-out infinite; pointer-events: none; }
-.avatar-char { font-size: clamp(7rem, 22vw, 11rem); line-height: 1; position: relative; z-index: 1; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.25)); display: block; }
-.avatar-shadow { width: 70px; height: 14px; border-radius: 50%; background: rgba(0,0,0,0.18); filter: blur(5px); margin-top: 2px; }
-.avatar-gear { position: absolute; z-index: 2; line-height: 1; pointer-events: none; }
-.avatar-headband { position: absolute; top: 24%; left: 10%; right: 10%; height: 9%; border-radius: 999px; z-index: 2; opacity: 0.85; pointer-events: none; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-.buddy-shadow { width: 80px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.2); filter: blur(6px); margin-top: 4px; }
+.avatar-stage {
+  position: relative;
+  width: 200px; height: 240px;
+  display: flex; align-items: flex-end; justify-content: center;
+  animation: buddy-float 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.avatar-stage.bump { animation: none; transform: translateY(-16px) scale(1.08); transition: transform 0.18s cubic-bezier(.34,1.56,.64,1); }
+
+.avatar-glow {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  width: 160px; height: 160px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(214,242,78,0.45) 0%, transparent 68%);
+  animation: pulse-glow 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Pannebånd: CSS-stripe bak figuren */
+.avatar-hb {
+  position: absolute;
+  top: 68px; left: 24px; right: 24px;
+  height: 18px; border-radius: 999px;
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  transition: background 0.2s;
+}
+
+.avatar-char {
+  font-size: 7.5rem; line-height: 1;
+  position: relative; z-index: 2;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.22));
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Utstyr posisjonert absolutt over figuren */
+.avatar-acc {
+  position: absolute; z-index: 3;
+  line-height: 1; pointer-events: none;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25));
+}
+
+.avatar-shadow {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  width: 72px; height: 14px; border-radius: 50%;
+  background: rgba(0,0,0,0.15); filter: blur(5px);
+}
+
+/* Pop-inn animasjon når gear velges */
+@keyframes gear-pop {
+  0%   { transform-origin: center; transform: scale(0.4) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.18) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.gear-pop { animation: gear-pop 0.35s cubic-bezier(.34,1.56,.64,1) forwards; }
 
 .buddy-name { font-family: var(--font-head); font-weight: 700; font-size: 1.4rem; margin-top: 10px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
 .coins { display: inline-flex; align-items: center; gap: 8px; background: var(--ball); color: var(--green-deep); border-radius: 999px; padding: 8px 16px; font-weight: 800; margin-top: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }

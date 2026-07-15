@@ -1,42 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { GEAR_ITEMS } from "@/lib/buddies";
 
-// Plasserer utstyr på riktige steder på figuren.
-// Emojien er ca 160px høy; vi bruker prosentverdier relativt til wrapperens høyde.
-const SLOT_STYLE: Record<string, React.CSSProperties> = {
-  top:      { top: "-18%", left: "50%", transform: "translateX(-50%)", fontSize: "42%" },
-  forehead: { top: "4%",  left: "50%", transform: "translateX(-50%)", fontSize: "28%" },
-  eyes:     { top: "28%", left: "50%", transform: "translateX(-50%)", fontSize: "36%" },
-  hand:     { bottom: "8%", right: "-18%", fontSize: "46%" },
+// Posisjonering er tunet for Apple emoji ved 120px tegnhøyde.
+// Wrapper er 200×240px — ekstra rom for caps over hodet og racket til siden.
+const SLOT: Record<string, React.CSSProperties> = {
+  top:   { top: "0px",    left: "50%", transform: "translateX(-50%) rotate(-5deg)", fontSize: "2.8rem" },
+  eyes:  { top: "44px",   left: "50%", transform: "translateX(-50%)",               fontSize: "2rem"   },
+  hand:  { top: "80px",   right: "4px", transform: "rotate(30deg)",                  fontSize: "2.8rem" },
 };
 
-// Pannebånd rendres som en farget CSS-stripe, ikke emoji
 const HEADBAND_COLOR: Record<string, string> = {
-  "🩷": "#f472b6",
-  "💚": "#22c55e",
+  "🩷": "#f9a8d4",
+  "💚": "#4ade80",
 };
 
 export default function CharacterAvatar({
-  emoji,
-  gear,
-  bump,
+  emoji, gear, bump,
 }: {
-  emoji: string;
-  gear: string;
-  bump: boolean;
+  emoji: string; gear: string; bump: boolean;
 }) {
-  const item = GEAR_ITEMS.find((g) => g.emoji === gear);
+  const item  = GEAR_ITEMS.find((g) => g.emoji === gear);
+  const isHb  = item?.slot === "forehead";
+  const hbCol = gear ? HEADBAND_COLOR[gear] : null;
+
+  // Trigger pop-animasjon når gear endres
+  const [pop, setPop] = useState(false);
+  useEffect(() => {
+    if (!gear) return;
+    setPop(true);
+    const t = setTimeout(() => setPop(false), 400);
+    return () => clearTimeout(t);
+  }, [gear]);
 
   return (
-    <div className={`avatar-wrap${bump ? " bump" : ""}`}>
-      <div className="avatar-glow" />
+    <div className={`avatar-stage${bump ? " bump" : ""}`}>
+      <div className="avatar-glow" aria-hidden="true" />
 
-      {/* Pannebånd: CSS-stripe */}
-      {item?.slot === "forehead" && HEADBAND_COLOR[gear] && (
+      {/* Pannebånd bak figuren */}
+      {isHb && hbCol && (
         <div
-          className="avatar-headband"
-          style={{ background: HEADBAND_COLOR[gear] }}
+          className={`avatar-hb${pop ? " gear-pop" : ""}`}
+          style={{ background: hbCol }}
           aria-hidden="true"
         />
       )}
@@ -44,18 +50,18 @@ export default function CharacterAvatar({
       {/* Hovedikonet */}
       <span className="avatar-char" aria-hidden="true">{emoji}</span>
 
-      {/* Utstyr festet til figuren */}
-      {item && item.slot !== "forehead" && gear && (
+      {/* Utstyr foran figuren */}
+      {item && !isHb && gear && (
         <span
-          className="avatar-gear"
-          style={SLOT_STYLE[item.slot]}
+          className={`avatar-acc${pop ? " gear-pop" : ""}`}
+          style={SLOT[item.slot]}
           aria-hidden="true"
         >
           {gear}
         </span>
       )}
 
-      <div className="avatar-shadow" />
+      <div className="avatar-shadow" aria-hidden="true" />
     </div>
   );
 }
