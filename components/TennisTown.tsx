@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { BUDDIES, LOCKED_BUDDIES, GEAR_ITEMS, LOCKED_GEAR_ITEMS, buddyEmoji } from "@/lib/buddies";
+import { BUDDIES, LOCKED_BUDDIES, GEAR_ITEMS, LOCKED_GEAR_ITEMS } from "@/lib/buddies";
 import { setBuddyGear } from "@/app/ovelser/actions";
 import CharacterAvatar from "./CharacterAvatar";
+import KidSVG from "./KidSVG";
 
 type LiveChild = {
   childId: string;
@@ -65,7 +66,7 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
             <span className="tb tb3">🎾</span>
           </div>
           <div aria-live="polite">
-            <CharacterAvatar emoji={buddyEmoji(buddy)} gear={gear} bump={bump} />
+            <CharacterAvatar buddyId={buddy.toLowerCase()} gear={gear} bump={bump} />
           </div>
           <div className="buddy-name">{buddy}</div>
           <div className="coins">🎾 <span>{balls}</span> baller</div>
@@ -86,7 +87,7 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
                     aria-pressed={b.name === buddy}
                     onClick={() => pickBuddy(b.name)}
                   >
-                    <span className="buddy-card-emoji">{b.emoji}</span>
+                    <span className="buddy-card-kid"><KidSVG id={b.id} size={46} /></span>
                     <span className="buddy-card-name">{b.name}</span>
                   </button>
                 ))}
@@ -101,7 +102,7 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
                     aria-pressed={b.name === buddy}
                     onClick={() => pickBuddy(b.name)}
                   >
-                    <span className="buddy-card-emoji">{b.emoji}</span>
+                    <span className="buddy-card-kid"><KidSVG id={b.id} size={46} /></span>
                     <span className="buddy-card-name">{b.name}</span>
                   </button>
                 ))}
@@ -122,7 +123,7 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
                     title={open ? b.name : `Lås opp med ${b.req} baller`}
                     onClick={open ? () => pickBuddy(b.name) : undefined}
                   >
-                    <span className="buddy-card-emoji">{open ? b.emoji : "🔒"}</span>
+                    <span className="buddy-card-emoji" style={{ fontSize: "2rem" }}>{open ? b.emoji : "🔒"}</span>
                     <span className="buddy-card-name">{open ? b.name : `${b.req} 🎾`}</span>
                   </button>
                 );

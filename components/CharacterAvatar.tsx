@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { GEAR_ITEMS } from "@/lib/buddies";
+import KidSVG from "./KidSVG";
 
-// Emoji er satt til nøyaktig 120px (se CSS). Stage er 180×220px.
-// Emojien sitter med bunn 20px fra stage-bunn → emoji-topp = 220-20-120 = 80px fra topp.
-// Apple emoji-proporsjoner ved 120px:
-//   Hodetopp  → +5px   (abs 85px fra stage-topp)
-//   Panne     → +15px  (95px)
-//   Øyne      → +35px  (115px)
-//   Skuldre   → +68px  (148px)
-//   Hender    → +85px  (165px)
+// SVG figur: 100×170px, stage: 180×220px.
+// SVG plassert: bottom:18px, sentrert horisontalt.
+// → SVG-topp: 220-18-170 = 32px fra stage-topp, venstre: 40px
+// Hodenavn i SVG: cx=50, cy=34 (ry=22) → stage-senter (90, 66)
+// Hårtopp (gutt): SVG y≈6 → stage y≈38  |  Øyne: SVG y=34 → stage y=66
+// Høyre hånd: SVG (83,100) → stage (123, 132)
 
 type GearPos = {
   top?: number; left?: number; right?: number;
@@ -18,9 +17,9 @@ type GearPos = {
 };
 
 const GEAR_POS: Record<string, GearPos> = {
-  top:      { top: 48,  size: 52, centerX: true },          // caps/sløyfe: brem på panna, resten over hodet
-  eyes:     { top: 108, size: 38, centerX: true },           // solbriller: over øynene
-  hand:     { top: 152, right: 2, size: 44, rotate: 30 },   // racket: i hånda
+  top:  { top: 14,  size: 38, centerX: true },           // caps/sløyfe: på toppen av hodet
+  eyes: { top: 53,  size: 30, centerX: true },           // solbriller: over øynene
+  hand: { top: 118, right: 6, size: 36, rotate: 30 },   // racket: i høyre hånd
 };
 
 const HEADBAND_COLOR: Record<string, string> = {
@@ -29,9 +28,9 @@ const HEADBAND_COLOR: Record<string, string> = {
 };
 
 export default function CharacterAvatar({
-  emoji, gear, bump,
+  buddyId, gear, bump,
 }: {
-  emoji: string; gear: string; bump: boolean;
+  buddyId: string; gear: string; bump: boolean;
 }) {
   const item = GEAR_ITEMS.find((g) => g.emoji === gear);
   const isHb = item?.slot === "forehead";
@@ -65,16 +64,18 @@ export default function CharacterAvatar({
     <div className={`avatar-stage${bump ? " bump" : ""}`} aria-hidden="true">
       <div className="avatar-glow" />
 
-      {/* Pannebånd: farget CSS-stripe FORAN emojien */}
+      {/* Pannebånd: farget CSS-stripe foran figuren */}
       {isHb && HEADBAND_COLOR[gear] && (
         <div
-          className={`avatar-hb${pop ? " gear-pop" : ""}`}
+          className={`avatar-hb${pop ? " gear-pop-hb" : ""}`}
           style={{ background: HEADBAND_COLOR[gear] }}
         />
       )}
 
-      {/* Selve figuren */}
-      <span className="avatar-char">{emoji}</span>
+      {/* Hele barn-figuren som SVG */}
+      <div className="avatar-svg-wrap">
+        <KidSVG id={buddyId} />
+      </div>
 
       {/* Utstyr presist plassert */}
       {item && !isHb && gear && (

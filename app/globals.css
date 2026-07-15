@@ -200,23 +200,29 @@ a:focus-visible, .btn:focus-visible, .opt:focus-visible, .card:focus-visible, bu
   pointer-events: none; z-index: 0;
 }
 
-/* Figuren: fast 120px → piksel-posisjonering er presis */
-.avatar-char {
+/* Helfigur SVG wrapper — sentrert i stage, bunn 18px fra stage-bunn */
+.avatar-svg-wrap {
   position: absolute;
-  bottom: 20px; left: 50%; transform: translateX(-50%);
-  font-size: 120px; line-height: 1;
+  bottom: 18px; left: 50%; transform: translateX(-50%);
   z-index: 2;
   filter: drop-shadow(0 6px 18px rgba(0,0,0,0.22));
 }
 
-/* Pannebånd: stripe over panna (z-index 3 = foran emoji) */
+/* Pannebånd: stripe over panna (z-index 3 = foran figuren)
+   SVG-pannekant ≈ stage y=47 | hodebredde ≈ stage x 65–115 */
 .avatar-hb {
   position: absolute;
-  top: 93px; left: 28px; right: 28px;
-  height: 14px; border-radius: 999px;
+  top: 47px; left: 65px; right: 65px;
+  height: 12px; border-radius: 999px;
   z-index: 3;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
+@keyframes gear-pop-hb {
+  0%   { opacity: 0; transform: scaleX(0.2); }
+  70%  { opacity: 1; transform: scaleX(1.1); }
+  100% { opacity: 1; transform: scaleX(1); }
+}
+.gear-pop-hb { animation: gear-pop-hb 0.35s cubic-bezier(.34,1.56,.64,1) forwards; }
 
 .avatar-shadow {
   position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
@@ -251,7 +257,8 @@ a:focus-visible, .btn:focus-visible, .opt:focus-visible, .card:focus-visible, bu
 .buddy-card:hover { border-color: var(--ball-deep); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 .buddy-card.active { border-color: var(--green); background: var(--green-soft); box-shadow: var(--shadow-sm); }
 .buddy-card.locked { opacity: 0.5; cursor: not-allowed; }
-.buddy-card-emoji { font-size: 2.6rem; line-height: 1; }
+.buddy-card-emoji { font-size: 2rem; line-height: 1; }
+.buddy-card-kid { display: flex; align-items: center; justify-content: center; }
 .buddy-card-name { font-family: var(--font-head); font-weight: 700; font-size: 0.82rem; color: var(--green-deep); }
 
 .opts { display: flex; flex-wrap: wrap; gap: 10px; }
