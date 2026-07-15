@@ -186,59 +186,57 @@ a:focus-visible, .btn:focus-visible, .opt:focus-visible, .card:focus-visible, bu
 /* Character Avatar */
 .avatar-stage {
   position: relative;
-  width: 200px; height: 240px;
-  display: flex; align-items: flex-end; justify-content: center;
-  animation: buddy-float 2.5s ease-in-out infinite;
+  width: 180px; height: 220px;
   flex-shrink: 0;
+  animation: buddy-float 2.5s ease-in-out infinite;
 }
 .avatar-stage.bump { animation: none; transform: translateY(-16px) scale(1.08); transition: transform 0.18s cubic-bezier(.34,1.56,.64,1); }
 
 .avatar-glow {
-  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-  width: 160px; height: 160px; border-radius: 50%;
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  width: 150px; height: 150px; border-radius: 50%;
   background: radial-gradient(circle, rgba(214,242,78,0.45) 0%, transparent 68%);
   animation: pulse-glow 2.5s ease-in-out infinite;
-  pointer-events: none;
+  pointer-events: none; z-index: 0;
 }
 
-/* Pannebånd: CSS-stripe bak figuren */
+/* Figuren: fast 120px → piksel-posisjonering er presis */
+.avatar-char {
+  position: absolute;
+  bottom: 20px; left: 50%; transform: translateX(-50%);
+  font-size: 120px; line-height: 1;
+  z-index: 2;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.22));
+}
+
+/* Pannebånd: stripe over panna (z-index 3 = foran emoji) */
 .avatar-hb {
   position: absolute;
-  top: 68px; left: 24px; right: 24px;
-  height: 18px; border-radius: 999px;
-  z-index: 1;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  transition: background 0.2s;
-}
-
-.avatar-char {
-  font-size: 7.5rem; line-height: 1;
-  position: relative; z-index: 2;
-  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.22));
-  display: block;
-  margin-bottom: 8px;
-}
-
-/* Utstyr posisjonert absolutt over figuren */
-.avatar-acc {
-  position: absolute; z-index: 3;
-  line-height: 1; pointer-events: none;
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25));
+  top: 93px; left: 28px; right: 28px;
+  height: 14px; border-radius: 999px;
+  z-index: 3;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .avatar-shadow {
-  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
-  width: 72px; height: 14px; border-radius: 50%;
-  background: rgba(0,0,0,0.15); filter: blur(5px);
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 68px; height: 12px; border-radius: 50%;
+  background: rgba(0,0,0,0.15); filter: blur(5px); z-index: 0;
 }
 
-/* Pop-inn animasjon når gear velges */
+/* Pop-inn animasjon */
 @keyframes gear-pop {
-  0%   { transform-origin: center; transform: scale(0.4) rotate(-10deg); opacity: 0; }
-  60%  { transform: scale(1.18) rotate(4deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.3) rotate(-15deg); }
+  65%  { opacity: 1; transform: translateX(-50%) scale(1.15) rotate(5deg); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
 }
-.gear-pop { animation: gear-pop 0.35s cubic-bezier(.34,1.56,.64,1) forwards; }
+/* Pop for høyre-side items (racket) */
+@keyframes gear-pop-right {
+  0%   { opacity: 0; transform: scale(0.3) rotate(15deg); }
+  65%  { opacity: 1; transform: scale(1.15) rotate(35deg); }
+  100% { opacity: 1; transform: scale(1) rotate(30deg); }
+}
+.gear-pop { animation: gear-pop 0.38s cubic-bezier(.34,1.56,.64,1) forwards; }
 
 .buddy-name { font-family: var(--font-head); font-weight: 700; font-size: 1.4rem; margin-top: 10px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
 .coins { display: inline-flex; align-items: center; gap: 8px; background: var(--ball); color: var(--green-deep); border-radius: 999px; padding: 8px 16px; font-weight: 800; margin-top: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }

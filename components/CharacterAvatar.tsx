@@ -3,12 +3,24 @@
 import { useEffect, useState } from "react";
 import { GEAR_ITEMS } from "@/lib/buddies";
 
-// Posisjonering er tunet for Apple emoji ved 120px tegnhøyde.
-// Wrapper er 200×240px — ekstra rom for caps over hodet og racket til siden.
-const SLOT: Record<string, React.CSSProperties> = {
-  top:   { top: "0px",    left: "50%", transform: "translateX(-50%) rotate(-5deg)", fontSize: "2.8rem" },
-  eyes:  { top: "44px",   left: "50%", transform: "translateX(-50%)",               fontSize: "2rem"   },
-  hand:  { top: "80px",   right: "4px", transform: "rotate(30deg)",                  fontSize: "2.8rem" },
+// Emoji er satt til nøyaktig 120px (se CSS). Stage er 180×220px.
+// Emojien sitter med bunn 20px fra stage-bunn → emoji-topp = 220-20-120 = 80px fra topp.
+// Apple emoji-proporsjoner ved 120px:
+//   Hodetopp  → +5px   (abs 85px fra stage-topp)
+//   Panne     → +15px  (95px)
+//   Øyne      → +35px  (115px)
+//   Skuldre   → +68px  (148px)
+//   Hender    → +85px  (165px)
+
+type GearPos = {
+  top?: number; left?: number; right?: number;
+  size: number; rotate?: number; centerX?: boolean;
+};
+
+const GEAR_POS: Record<string, GearPos> = {
+  top:      { top: 48,  size: 52, centerX: true },          // caps/sløyfe: brem på panna, resten over hodet
+  eyes:     { top: 108, size: 38, centerX: true },           // solbriller: over øynene
+  hand:     { top: 152, right: 2, size: 44, rotate: 30 },   // racket: i hånda
 };
 
 const HEADBAND_COLOR: Record<string, string> = {
@@ -21,11 +33,10 @@ export default function CharacterAvatar({
 }: {
   emoji: string; gear: string; bump: boolean;
 }) {
-  const item  = GEAR_ITEMS.find((g) => g.emoji === gear);
-  const isHb  = item?.slot === "forehead";
-  const hbCol = gear ? HEADBAND_COLOR[gear] : null;
+  const item = GEAR_ITEMS.find((g) => g.emoji === gear);
+  const isHb = item?.slot === "forehead";
+  const pos  = item ? GEAR_POS[item.slot] : null;
 
-  // Trigger pop-animasjon når gear endres
   const [pop, setPop] = useState(false);
   useEffect(() => {
     if (!gear) return;
@@ -34,34 +45,45 @@ export default function CharacterAvatar({
     return () => clearTimeout(t);
   }, [gear]);
 
-  return (
-    <div className={`avatar-stage${bump ? " bump" : ""}`}>
-      <div className="avatar-glow" aria-hidden="true" />
+  const accStyle: React.CSSProperties = pos ? {
+    position: "absolute",
+    top:      pos.top  != null ? pos.top  : undefined,
+    right:    pos.right != null ? pos.right : undefined,
+    left:     pos.centerX ? "50%" : (pos.left != null ? pos.left : undefined),
+    transform: [
+      pos.centerX ? "translateX(-50%)" : "",
+      pos.rotate  ? `rotate(${pos.rotate}deg)` : "",
+    ].filter(Boolean).join(" ") || undefined,
+    fontSize: pos.size,
+    lineHeight: 1,
+    zIndex: 3,
+    pointerEvents: "none",
+    filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.22))",
+  } : {};
 
-      {/* Pannebånd bak figuren */}
-      {isHb && hbCol && (
+  return (
+    <div className={`avatar-stage${bump ? " bump" : ""}`} aria-hidden="true">
+      <div className="avatar-glow" />
+
+      {/* Pannebånd: farget CSS-stripe FORAN emojien */}
+      {isHb && HEADBAND_COLOR[gear] && (
         <div
           className={`avatar-hb${pop ? " gear-pop" : ""}`}
-          style={{ background: hbCol }}
-          aria-hidden="true"
+          style={{ background: HEADBAND_COLOR[gear] }}
         />
       )}
 
-      {/* Hovedikonet */}
-      <span className="avatar-char" aria-hidden="true">{emoji}</span>
+      {/* Selve figuren */}
+      <span className="avatar-char">{emoji}</span>
 
-      {/* Utstyr foran figuren */}
+      {/* Utstyr presist plassert */}
       {item && !isHb && gear && (
-        <span
-          className={`avatar-acc${pop ? " gear-pop" : ""}`}
-          style={SLOT[item.slot]}
-          aria-hidden="true"
-        >
+        <span className={pop ? "gear-pop" : ""} style={accStyle}>
           {gear}
         </span>
       )}
 
-      <div className="avatar-shadow" aria-hidden="true" />
+      <div className="avatar-shadow" />
     </div>
   );
 }
