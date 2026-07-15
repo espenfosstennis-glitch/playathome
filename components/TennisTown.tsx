@@ -84,6 +84,9 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
   const buddyId = [...BUDDIES, ...LOCKED_BUDDIES]
     .find((b) => b.name === buddy)?.id ?? "lars";
 
+  // Neste låste utstyr barnet kan samle mot
+  const nextUnlock = LOCKED_GEAR.find((g) => g.req > balls);
+
   return (
     <>
       {/* Unlock-animasjon */}
@@ -110,6 +113,24 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
             </div>
             <div className="buddy-name">{buddy}</div>
             <div className="coins">🎾 <span>{balls}</span> baller</div>
+
+            {/* Fremdriftslinje mot neste opplåsning */}
+            {nextUnlock && (
+              <div className="next-unlock">
+                <div className="next-unlock-track">
+                  <div
+                    className="next-unlock-fill"
+                    style={{ width: `${Math.min(100, Math.round((balls / nextUnlock.req) * 100))}%` }}
+                  />
+                </div>
+                <p className="next-unlock-text">
+                  <strong>{nextUnlock.req - balls}</strong> baller til {nextUnlock.label}!
+                </p>
+              </div>
+            )}
+            {!nextUnlock && balls > 0 && (
+              <p className="next-unlock-done">🏆 Alt utstyr låst opp!</p>
+            )}
           </div>
 
           {/* Panel */}
