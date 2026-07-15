@@ -26,6 +26,12 @@ export const skill = defineType({
       type: "number",
       description: "Lavere tall vises først.",
     }),
+    defineField({
+      name: "parent",
+      title: "Foreldrekategori",
+      type: "string",
+      description: "Slug til foreldrekategori (f.eks. hjemmetrening).",
+    }),
   ],
   orderings: [
     { title: "Rekkefølge", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },

@@ -5,8 +5,8 @@ import { signIn, signUp, type AuthState } from "@/app/logg-inn/actions";
 
 const initial: AuthState = {};
 
-export default function AuthForm() {
-  const [mode, setMode] = useState<"inn" | "ny">("inn");
+export default function AuthForm({ initialMode = "inn" }: { initialMode?: "inn" | "ny" }) {
+  const [mode, setMode] = useState<"inn" | "ny">(initialMode);
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
     mode === "inn" ? signIn : signUp,
     initial,

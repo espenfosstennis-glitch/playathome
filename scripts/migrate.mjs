@@ -15,9 +15,9 @@ const file = process.argv[2] || "supabase/migrations/0001_init_auth_children_pro
 const sql = readFileSync(file, "utf8");
 
 const client = new Client({
-  host: "aws-0-eu-west-1.pooler.supabase.com",
+  host: "db.xkpmxrhmdixvvfcfibsb.supabase.co",
   port: 5432,
-  user: "postgres.xtrkqkullucgrlpdzsmc",
+  user: "postgres",
   password,
   database: "postgres",
   ssl: { rejectUnauthorized: false },

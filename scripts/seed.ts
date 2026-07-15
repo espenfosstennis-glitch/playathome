@@ -47,6 +47,7 @@ async function seed() {
       emoji: s.emoji,
       tagline: s.tagline,
       order: i,
+      ...(s.parent ? { parent: s.parent } : {}),
     });
   });
 

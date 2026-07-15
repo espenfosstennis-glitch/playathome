@@ -55,9 +55,20 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
     <div className="town">
       <div className="town-grid">
         <div className="town-stage">
-          <div className={`buddy${bump ? " bump" : ""}`} aria-live="polite">
-            {buddyEmoji(buddy)}
-            {gear}
+          <div className="town-scene">
+            <div className="town-balls">
+              <span className="tb tb1">🎾</span>
+              <span className="tb tb2">🎾</span>
+              <span className="tb tb3">🎾</span>
+            </div>
+            <div className={`buddy-wrap${bump ? " bump" : ""}`} aria-live="polite">
+              <div className="buddy-glow" />
+              <div className="buddy-char">
+                {buddyEmoji(buddy)}
+                {gear && <span className="buddy-gear">{gear}</span>}
+              </div>
+              <div className="buddy-shadow" />
+            </div>
           </div>
           <div className="buddy-name">{buddy}</div>
           <div className="coins">
@@ -66,16 +77,17 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
         </div>
         <div className="town-panel">
           <strong className="picker-label">Velg kompis</strong>
-          <div className="opts" role="group" aria-label="Velg kompis">
+          <div className="buddy-grid" role="group" aria-label="Velg kompis">
             {BUDDIES.map((b) => (
               <button
                 key={b.name}
                 type="button"
-                className={`opt${b.name === buddy ? " active" : ""}`}
+                className={`buddy-card${b.name === buddy ? " active" : ""}`}
                 aria-pressed={b.name === buddy}
                 onClick={() => pickBuddy(b.name)}
               >
-                {b.emoji}
+                <span className="buddy-card-emoji">{b.emoji}</span>
+                <span className="buddy-card-name">{b.name}</span>
               </button>
             ))}
             {LOCKED_BUDDIES.map((b) => {
@@ -84,13 +96,14 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
                 <button
                   key={b.name}
                   type="button"
-                  className={`opt${open ? "" : " locked"}${b.name === buddy ? " active" : ""}`}
+                  className={`buddy-card${open ? "" : " locked"}${b.name === buddy ? " active" : ""}`}
                   aria-pressed={b.name === buddy}
                   disabled={!open}
                   title={open ? b.name : `Lås opp med ${b.req} baller`}
                   onClick={open ? () => pickBuddy(b.name) : undefined}
                 >
-                  {b.emoji}
+                  <span className="buddy-card-emoji">{open ? b.emoji : "🔒"}</span>
+                  <span className="buddy-card-name">{open ? b.name : `${b.req} 🎾`}</span>
                 </button>
               );
             })}

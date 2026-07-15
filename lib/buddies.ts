@@ -4,14 +4,14 @@
 export type Buddy = { id: string; emoji: string; name: string };
 
 export const BUDDIES: Buddy[] = [
-  { id: "bamse", emoji: "🐻", name: "Bamse" },
-  { id: "hoppe", emoji: "🐰", name: "Hoppe" },
-  { id: "rev", emoji: "🦊", name: "Rev" },
+  { id: "ace", emoji: "🎾", name: "Ace" },
+  { id: "smash", emoji: "🏆", name: "Smash" },
+  { id: "bolt", emoji: "⚡", name: "Bolt" },
 ];
 
 export const LOCKED_BUDDIES = [
-  { id: "love", emoji: "🦁", name: "Løve", req: 30 },
-  { id: "tiger", emoji: "🐯", name: "Tiger", req: 50 },
+  { id: "champion", emoji: "🥇", name: "Champion", req: 30 },
+  { id: "star", emoji: "⭐", name: "Tennisstjerne", req: 50 },
 ];
 
 export function buddyEmoji(name: string | null | undefined): string {

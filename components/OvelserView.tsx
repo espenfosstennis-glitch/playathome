@@ -34,8 +34,14 @@ export default function OvelserView({
   childrenList: { id: string; name: string }[];
   personal: Personal | null;
 }) {
-  const validInitial = skills.some((s) => s.slug === initialSkill) ? initialSkill : "alle";
+  const mainSkills = skills.filter((s) => !s.parent);
+  const firstMain = mainSkills[0]?.slug ?? "hjemmetrening";
+  const validInitial = skills.some((s) => s.slug === initialSkill) ? initialSkill : firstMain;
   const [activeSkill, setActiveSkill] = useState(validInitial);
+  const [activeMain, setActiveMain] = useState(() => {
+    const s = skills.find((sk) => sk.slug === validInitial);
+    return s?.parent ?? validInitial;
+  });
   const [done, setDone] = useState<Set<string>>(() => new Set(personal?.completedSlugs ?? []));
   const [balls, setBalls] = useState(personal?.balls ?? 0);
   const [level, setLevel] = useState(personal?.level ?? "Nybegynner");
@@ -55,10 +61,14 @@ export default function OvelserView({
     setLevel(personal?.level ?? "Nybegynner");
   }
 
-  const visible = exercises.filter((e) => activeSkill === "alle" || e.skill === activeSkill);
+  const subSkills = skills.filter((s) => s.parent === activeMain);
+  const hasSubSkills = subSkills.length > 0;
+  const visible = exercises.filter((e) =>
+    hasSubSkills ? e.skill === activeSkill : e.skill === activeMain
+  );
   const current = exercises.find((e) => e.slug === openSlug) ?? null;
-  const activeName = skills.find((s) => s.slug === activeSkill)?.name;
-  const heading = activeSkill === "alle" ? "Bla i 100 øvelser" : activeName ?? "Øvelser";
+  const activeName = skills.find((s) => s.slug === activeMain)?.name;
+  const heading = activeName ?? "Øvelser";
 
   // Dagens øvelse = første som ikke er gjort (eller første øvelse).
   const todays = exercises.find((e) => !done.has(e.slug)) ?? exercises[0] ?? null;
@@ -244,30 +254,46 @@ export default function OvelserView({
         </section>
       )}
 
-      {/* Filtre */}
-      <div id="filter" style={{ marginTop: 34 }}>
-        <span className="eyebrow">Alle øvelsene</span>
-        <h2 style={{ fontSize: "clamp(1.6rem,4vw,2.2rem)", marginTop: 8 }}>{heading}</h2>
+      {/* Hovedkategorier */}
+      <div id="filter" style={{ marginTop: 40 }}>
+        <span className="eyebrow">Velg kategori</span>
       </div>
-      <div className="filters" role="group" aria-label="Filtrer på ferdighet">
-        <button
-          type="button"
-          className={`chip${activeSkill === "alle" ? " active" : ""}`}
-          onClick={() => setActiveSkill("alle")}
-        >
-          Alle
-        </button>
-        {skills.map((s) => (
+      <div className="cat-btns" role="group" aria-label="Velg hovedkategori">
+        {mainSkills.map((s) => (
           <button
             key={s.slug}
             type="button"
-            className={`chip${activeSkill === s.slug ? " active" : ""}`}
-            onClick={() => setActiveSkill(s.slug)}
+            className={`cat-btn${activeMain === s.slug ? " active" : ""}`}
+            onClick={() => {
+              setActiveMain(s.slug);
+              const first = skills.find((sk) => sk.parent === s.slug);
+              setActiveSkill(first?.slug ?? s.slug);
+            }}
           >
-            {s.emoji} {s.name}
+            <span className="cat-icon">{s.emoji}</span>
+            <span className="cat-label">{s.name}</span>
           </button>
         ))}
       </div>
+
+      {/* Underkategorier */}
+      {hasSubSkills && (
+        <div style={{ marginTop: 24 }}>
+          <span className="eyebrow">Alt en liten spiller trenger å bli kjent med</span>
+          <div className="filters" role="group" aria-label="Velg underkategori" style={{ marginTop: 10 }}>
+            {subSkills.map((s) => (
+              <button
+                key={s.slug}
+                type="button"
+                className={`chip${activeSkill === s.slug ? " active" : ""}`}
+                onClick={() => setActiveSkill(s.slug)}
+              >
+                {s.emoji} {s.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Øvelseskort */}
       <div className="grid">

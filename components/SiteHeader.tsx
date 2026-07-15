@@ -15,8 +15,8 @@ export default function SiteHeader() {
           <Link href="/#coach">Om Espen</Link>
           <Link href="/logg-inn">Logg inn</Link>
         </nav>
-        <Link href="/ovelser" className="btn btn-ball nav-cta">
-          Start gratis
+        <Link href="/lag-konto" className="btn btn-ball nav-cta">
+          Lag en konto
         </Link>
       </div>
     </header>
