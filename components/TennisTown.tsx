@@ -76,8 +76,8 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
   const categories = ["racket", "cap", "bow", "headband", "glasses", "crown"] as const;
 
   function isAvailable(g: GearItem) {
-    if (!g.req) return true;           // gratis
-    if (!live)  return false;          // forhåndsvisning
+    if (!g.req) return true;
+    if (!live)  return true;   // preview: alt tilgjengelig for testing
     return balls >= g.req;
   }
 
