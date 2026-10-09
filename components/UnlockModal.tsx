@@ -9,7 +9,7 @@ const CONFETTI_COLORS = [
   "#EAB308", "#A855F7", "#EF4444", "#06B6D4",
 ];
 
-function Confetti() {
+export function Confetti() {
   const [pieces] = useState(() =>
     Array.from({ length: 28 }, (_, i) => ({
       id: i,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import {
   BUDDIES, LOCKED_BUDDIES, ALL_GEAR, LOCKED_GEAR,
   resolveGearId, type GearItem,
@@ -9,22 +9,25 @@ import { setBuddyGear } from "@/app/ovelser/actions";
 import CharacterAvatar from "./CharacterAvatar";
 import KidSVG from "./KidSVG";
 import UnlockModal from "./UnlockModal";
+import Celebration from "./Celebration";
+import { TOWN_ITEMS, townItemsFor, type TownItem } from "@/lib/town";
 
 type LiveChild = {
-  childId: string; balls: number;
+  childId: string; name?: string; balls: number;
   buddy: string; gear: string; unlocked: string[];
 };
 
 const BALLS_KEY = "playathome_balls";
+const GREET_MS  = 3200;
+
+type Party = { gain: number; newTown: TownItem[] };
 
 const CAT_EMOJI: Record<string, string> = {
-  none: "🚫", racket: "🎾", cap: "🧢", bow: "🎀",
-  headband: "〰️", glasses: "🕶️", crown: "👑",
+  none: "🚫", racket: "🎾", ears: "🐾", magic: "✨", mask: "🦸", glasses: "😎", crown: "👑",
 };
 
 const CAT_LABEL: Record<string, string> = {
-  racket: "Racketer", cap: "Caps", bow: "Sløyfer",
-  headband: "Pannebånd", glasses: "Briller", crown: "Krone",
+  racket: "Racketer", ears: "Dyreører", magic: "Magi", mask: "Superhelter", glasses: "Briller", crown: "Spesial",
 };
 
 export default function TennisTown({ child }: { child?: LiveChild }) {
@@ -35,20 +38,45 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
   const [gearId, setGearId] = useState(() => resolveGearId(child?.gear));
   const [bump,   setBump]   = useState(false);
   const [unlockQueue, setUnlockQueue] = useState<GearItem[]>([]);
+  const [party,  setParty]  = useState<Party | null>(null);
+  const [greeting, setGreeting] = useState(true);
   const [, startTransition] = useTransition();
+  const seenBalls = useRef<number | null>(null);
 
-  // Sjekk om nye ting ble låst opp siden sist besøk
+  // Figuren vinker og hilser når siden åpnes
+  useEffect(() => {
+    const t = setTimeout(() => setGreeting(false), GREET_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Nye baller: feiring (når det skjer mens siden er åpen) og opplåsninger.
+  // Sist sette ballantall lagres per barn, så bytte av barn ikke gir falske opplåsninger.
   useEffect(() => {
     if (!child) return;
-    try {
-      const prev = Number(sessionStorage.getItem(BALLS_KEY) ?? -1);
-      sessionStorage.setItem(BALLS_KEY, String(balls));
-      if (prev < 0) return; // første besøk
-      const newly = LOCKED_GEAR.filter((g) => g.req > prev && g.req <= balls);
-      if (newly.length > 0) setUnlockQueue(newly);
-    } catch { /* sessionStorage ikke tilgjengelig */ }
+    const key = `${BALLS_KEY}:${child.childId}`;
+    const inSession = seenBalls.current !== null;
+    let prev = seenBalls.current;
+    if (prev === null) {
+      try {
+        const stored = sessionStorage.getItem(key);
+        if (stored !== null) prev = Number(stored);
+      } catch { /* sessionStorage ikke tilgjengelig */ }
+    }
+    seenBalls.current = balls;
+    try { sessionStorage.setItem(key, String(balls)); } catch { /* ignorer */ }
+    if (prev === null || balls <= prev) return;
+
+    const from = prev;
+    const newly = LOCKED_GEAR.filter((g) => g.req > from && g.req <= balls);
+    if (newly.length > 0) setUnlockQueue((q) => [...q, ...newly]);
+    if (inSession) {
+      const newTown = TOWN_ITEMS.filter((t) => t.req > from && t.req <= balls);
+      setParty({ gain: balls - from, newTown });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balls]);
+
+  const closeParty = useCallback(() => setParty(null), []);
 
   function doBump() {
     setBump(true);
@@ -72,8 +100,7 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
   const boys  = BUDDIES.filter((b) => ["Lars", "Noah"].includes(b.name));
   const girls = BUDDIES.filter((b) => ["Emma", "Maja"].includes(b.name));
 
-  // Grupper utstyr etter kategori for ryddig visning
-  const categories = ["racket", "cap", "bow", "headband", "glasses", "crown"] as const;
+  const categories = ["racket", "ears", "magic", "mask", "glasses", "crown"] as const;
 
   function isAvailable(g: GearItem) {
     if (!g.req) return true;
@@ -89,8 +116,21 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
 
   return (
     <>
+      {/* Feiring etter øvelse, deretter eventuelle opplåsninger */}
+      {party && (
+        <Celebration
+          buddyId={buddyId}
+          gearId={gearId}
+          name={child?.name}
+          balls={balls}
+          gain={party.gain}
+          newTown={party.newTown}
+          onClose={closeParty}
+        />
+      )}
+
       {/* Unlock-animasjon */}
-      {unlockQueue[0] && (
+      {!party && unlockQueue[0] && (
         <UnlockModal
           buddyId={buddyId}
           item={unlockQueue[0]}
@@ -108,8 +148,29 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
               <span className="tb tb2">🎾</span>
               <span className="tb tb3">🎾</span>
             </div>
-            <div aria-live="polite">
-              <CharacterAvatar buddyId={buddyId} gearId={gearId} bump={bump} />
+
+            {/* Byen vokser med ballene */}
+            <div className="town-items" aria-hidden="true">
+              {townItemsFor(balls).map((t, i) => (
+                <span key={t.id} className="town-item"
+                  style={{
+                    left: `${t.x}%`, top: `${t.y}%`,
+                    fontSize: `${t.size ?? 2}rem`,
+                    animationDelay: `${i * 0.12}s`,
+                  }}
+                >
+                  {t.emoji}
+                </span>
+              ))}
+            </div>
+
+            <div className="avatar-anchor" aria-live="polite">
+              {greeting && (
+                <div className="speech-bubble">
+                  {live ? `Hei${child?.name ? `, ${child.name}` : ""}.` : "Trykk på meg."}
+                </div>
+              )}
+              <CharacterAvatar buddyId={buddyId} gearId={gearId} bump={bump} wave={greeting} />
             </div>
             <div className="buddy-name">{buddy}</div>
             <div className="coins">🎾 <span>{balls}</span> baller</div>
@@ -211,7 +272,7 @@ export default function TennisTown({ child }: { child?: LiveChild }) {
                           {!avail && (
                             <span className="gear-card-cost">{g.req} 🎾</span>
                           )}
-                          <span className="gear-card-label">{g.label.replace(/ (racket|caps|sløyfe|bånd|briller|krone)/i, "")}</span>
+                          <span className="gear-card-label">{g.label}</span>
                         </button>
                       );
                     })}

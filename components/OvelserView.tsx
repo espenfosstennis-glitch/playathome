@@ -61,14 +61,19 @@ export default function OvelserView({
     setLevel(personal?.level ?? "Nybegynner");
   }
 
-  const subSkills = skills.filter((s) => s.parent === activeMain);
+  // Underkategorier vises bare når noen øvelser er koblet til dem i Sanity. Ellers (eller når
+  // hovedkategorien er valgt) vises alt under hovedkategorien, så siden aldri blir tom.
+  const subSkills = skills.filter(
+    (s) => s.parent === activeMain && exercises.some((e) => e.skill === s.slug),
+  );
   const hasSubSkills = subSkills.length > 0;
+  const subActive = subSkills.some((s) => s.slug === activeSkill);
   const visible = exercises.filter((e) =>
-    hasSubSkills ? e.skill === activeSkill : e.skill === activeMain
+    subActive
+      ? e.skill === activeSkill
+      : e.skill === activeMain || skills.find((s) => s.slug === e.skill)?.parent === activeMain,
   );
   const current = exercises.find((e) => e.slug === openSlug) ?? null;
-  const activeName = skills.find((s) => s.slug === activeMain)?.name;
-  const heading = activeName ?? "Øvelser";
 
   // Dagens øvelse = første som ikke er gjort (eller første øvelse).
   const todays = exercises.find((e) => !done.has(e.slug)) ?? exercises[0] ?? null;
@@ -243,8 +248,10 @@ export default function OvelserView({
             {personal.childName} sin tenniskompis
           </h2>
           <TennisTown
+            key={personal.childId}
             child={{
               childId: personal.childId,
+              name: personal.childName,
               balls,
               buddy: personal.buddy,
               gear: personal.gear,
@@ -266,8 +273,7 @@ export default function OvelserView({
             className={`cat-btn${activeMain === s.slug ? " active" : ""}`}
             onClick={() => {
               setActiveMain(s.slug);
-              const first = skills.find((sk) => sk.parent === s.slug);
-              setActiveSkill(first?.slug ?? s.slug);
+              setActiveSkill(s.slug);
             }}
           >
             <span className="cat-icon">{s.emoji}</span>

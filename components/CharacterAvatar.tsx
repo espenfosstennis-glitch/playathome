@@ -1,26 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import KidSVG from "./KidSVG";
 
 // 8 gnister i en ring rundt figuren — avvikende retning per index.
 const SPARKS = ["⭐", "✨", "💫", "🌟", "⭐", "✨", "💫", "🌟"];
 
 export default function CharacterAvatar({
-  buddyId, gearId, bump,
+  buddyId, gearId, bump, wave = false,
 }: {
-  buddyId: string; gearId: string; bump: boolean;
+  buddyId: string; gearId: string; bump: boolean; wave?: boolean;
 }) {
-  const [sparkling, setSparkling] = useState(false);
-  const [dancing,   setDancing]   = useState(false);
-
-  // Sparkle-eksplosjon hver gang gear byttes (unntatt "ingen")
-  useEffect(() => {
-    if (gearId === "none") return;
-    setSparkling(true);
-    const t = setTimeout(() => setSparkling(false), 750);
-    return () => clearTimeout(t);
-  }, [gearId]);
+  const [dancing, setDancing] = useState(false);
 
   function handleClick() {
     if (dancing) return;
@@ -32,6 +23,7 @@ export default function CharacterAvatar({
     "avatar-stage",
     bump    ? "bump"  : "",
     dancing ? "dance" : "",
+    wave && !bump && !dancing ? "wave" : "",
   ].filter(Boolean).join(" ");
 
   return (
@@ -46,10 +38,11 @@ export default function CharacterAvatar({
     >
       <div className="avatar-glow" />
 
-      {/* Sparkle-ring — 8 elementer stråler utover */}
-      {sparkling && SPARKS.map((s, i) => (
+      {/* Sparkle-ring hver gang gear byttes (unntatt "ingen"). key={gearId} spiller animasjonen
+          på nytt ved bytte; den slutter usynlig av seg selv (forwards), så ingen state trengs. */}
+      {gearId !== "none" && SPARKS.map((s, i) => (
         <span
-          key={i}
+          key={`${gearId}-${i}`}
           className="sparkle"
           style={{ "--si": i } as React.CSSProperties}
           aria-hidden="true"
