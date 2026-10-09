@@ -11,8 +11,9 @@ try {
   /* ingen .env.local */
 }
 
-// Bruker Edge (msedge) som allerede er på maskinen, så vi slipper å laste ned Chromium
-// (TLS-inspeksjon på nettet blokkerer Playwright sin nedlasting).
+// Bruker Playwright sin egen Chromium (npx playwright install chromium). På nett med
+// TLS-inspeksjon som blokkerer nedlastingen: sett PW_CHANNEL=msedge for å bruke Edge.
+const channel = process.env.PW_CHANNEL;
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -30,7 +31,7 @@ export default defineConfig({
     timeout: 120_000,
   },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Edge"], channel: "msedge" } },
-    { name: "mobile", use: { ...devices["Pixel 5"], channel: "msedge" } },
+    { name: "desktop", use: { ...devices["Desktop Chrome"], channel } },
+    { name: "mobile", use: { ...devices["Pixel 5"], channel } },
   ],
 });

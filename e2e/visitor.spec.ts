@@ -8,22 +8,25 @@ test.describe("Utlogget besøkende", () => {
     await page.goto("/");
 
     await expect(page.getByText("som føles som lek")).toBeVisible();
-    await expect(page.getByRole("link", { name: /Ballkontroll/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Lek hjemme/ })).toBeVisible();
 
-    await page.getByRole("link", { name: /Ballkontroll/ }).click();
+    await page.getByRole("link", { name: /Lek hjemme/ }).click();
 
-    await expect(page).toHaveURL(/ferdighet=ballkontroll/);
-    await expect(page.getByRole("heading", { name: "Ballkontroll" })).toBeVisible();
+    await expect(page).toHaveURL(/ferdighet=hjemmetrening/);
+    await expect(page.locator(".card").first()).toBeVisible();
   });
 
   test("åpner en øvelse, fokus fanges i dialogen, og lukker med Escape", async ({ page }) => {
-    await page.goto("/ovelser?ferdighet=ballkontroll");
+    await page.goto("/ovelser?ferdighet=hjemmetrening");
 
-    await page.getByRole("button", { name: "Sprett og fang" }).click();
+    // Første kort, uansett innhold i Sanity
+    const firstCard = page.locator(".card .card-trigger").first();
+    const title = ((await firstCard.textContent()) ?? "").trim();
+    await firstCard.click();
 
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("heading", { name: "Sprett og fang" })).toBeVisible();
+    await expect(dialog.getByRole("heading", { name: title })).toBeVisible();
 
     // Fokusfelle: Tab flere ganger, fokus skal bli inne i dialogen
     for (let i = 0; i < 6; i++) await page.keyboard.press("Tab");

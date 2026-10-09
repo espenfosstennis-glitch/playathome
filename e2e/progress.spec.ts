@@ -49,6 +49,13 @@ test("markering lagrer baller, repetisjon teller, og fremgang er RLS-isolert", a
   await firstCard.click();
   await page.getByRole("button", { name: /Marker som gjort/ }).click();
 
+  // Feiring vises etter fullført øvelse og kan lukkes
+  const party = page.getByRole("dialog", { name: /Bra jobba/ });
+  await expect(party).toBeVisible();
+  await expect(party.getByText("Du har 1 baller.")).toBeVisible();
+  await party.getByRole("button", { name: "Videre" }).click();
+  await expect(party).toBeHidden();
+
   // Én ball, én unik øvelse
   await expect(page.getByText("🎾 1 baller").first()).toBeVisible();
   await expect(page.getByText("1 av 100 øvelser fullført")).toBeVisible();
@@ -60,6 +67,9 @@ test("markering lagrer baller, repetisjon teller, og fremgang er RLS-isolert", a
   // Repetisjon teller: samme øvelse igjen -> 2 baller, men fortsatt 1 unik
   await page.getByRole("button", { name: title, exact: true }).click();
   await page.getByRole("button", { name: /Gjort igjen|Marker som gjort/ }).click();
+  // 2 baller: første ting i byen (et tre) kommer
+  await expect(party.getByText(/Nytt i byen: .*Et tre/)).toBeVisible();
+  await party.getByRole("button", { name: "Videre" }).click();
   await expect(page.getByText("🎾 2 baller").first()).toBeVisible();
   await expect(page.getByText("1 av 100 øvelser fullført")).toBeVisible();
 
