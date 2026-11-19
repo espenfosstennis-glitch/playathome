@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import ChildForm from "@/components/ChildForm";
 import { createClient } from "@/lib/supabase/server";
 import { buddyEmoji } from "@/lib/buddies";
+import { requireCurrentTerms } from "@/lib/terms";
 import { deleteChild, signOut } from "./actions";
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default async function BarnPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/logg-inn");
+  await requireCurrentTerms(supabase, user.id, "/barn");
 
   const { data } = await supabase
     .from("children")

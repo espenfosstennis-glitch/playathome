@@ -48,6 +48,13 @@ async function login(page: Page, creds: { email: string; password: string }) {
   await page.getByLabel("E-post").fill(creds.email);
   await page.getByLabel("Passord").fill(creds.password);
   await page.getByRole("button", { name: "Logg inn" }).click();
+  await page.waitForURL((u) => u.pathname === "/barn" || u.pathname === "/vilkar");
+
+  if (new URL(page.url()).pathname === "/vilkar") {
+    await page.getByLabel("Jeg har lest og godtar vilkårene for bruk.").check();
+    await page.getByRole("button", { name: "Godta og fortsett" }).click();
+  }
+
   await page.waitForURL("**/barn");
 }
 

@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { BUDDIES, FREE_GEAR } from "@/lib/buddies";
 import { levelForBalls, unlockedItems } from "@/lib/gamification";
+import { requireCurrentTerms } from "@/lib/terms";
 import { ACTIVE_CHILD_COOKIE } from "./constants";
 
 const isUuid = (v: string) =>
@@ -32,6 +33,7 @@ export async function setActiveChild(formData: FormData): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
+  await requireCurrentTerms(supabase, user.id, "/ovelser");
 
   // Sett kun cookien for et barn forelderen faktisk eier.
   if (!(await ownChild(supabase, user.id, childId))) return;
@@ -60,6 +62,7 @@ export async function markExerciseDone(formData: FormData): Promise<MarkState> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Logg inn for å lagre fremgang." };
+  await requireCurrentTerms(supabase, user.id, "/ovelser");
   if (!(await ownChild(supabase, user.id, childId))) return { error: "Ukjent barn." };
 
   // 1) Hendelse: én rad per fullføring (repetisjoner teller). RLS bekrefter eierskap.
@@ -107,6 +110,7 @@ export async function setBuddyGear(formData: FormData): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
+  await requireCurrentTerms(supabase, user.id, "/ovelser");
   const child = await ownChild(supabase, user.id, childId);
   if (!child) return;
 

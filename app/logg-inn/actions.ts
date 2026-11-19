@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { hasAcceptedCurrentTerms, termsUrl } from "@/lib/terms";
 
 export type AuthState = { error?: string; message?: string };
 
@@ -18,6 +19,12 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: "Feil e-post eller passord." };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Kunne ikke bekrefte innloggingen. Prøv igjen." };
+  if (!(await hasAcceptedCurrentTerms(supabase, user.id))) redirect(termsUrl("/barn"));
 
   redirect("/barn");
 }
@@ -36,5 +43,5 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
     return { message: "Konto opprettet. Sjekk e-posten din for å bekrefte, og logg deretter inn." };
   }
 
-  redirect("/barn");
+  redirect(termsUrl("/barn"));
 }

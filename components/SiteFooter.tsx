@@ -24,6 +24,7 @@ export default function SiteFooter() {
             <Link href="/ovelser">Alle øvelsene</Link>
             <Link href="/#coach">Om Espen</Link>
             <Link href="/#faq">Vanlige spørsmål</Link>
+            <Link href="/vilkar">Vilkår for bruk</Link>
           </nav>
           <nav aria-label="Kontakt">
             <strong style={{ fontFamily: "var(--font-head)" }}>Kontakt</strong>

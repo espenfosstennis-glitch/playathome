@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BUDDIES } from "@/lib/buddies";
+import { requireCurrentTerms } from "@/lib/terms";
 
 export type ChildState = { error?: string; ok?: boolean };
 
@@ -25,6 +26,7 @@ export async function addChild(_prev: ChildState, formData: FormData): Promise<C
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/logg-inn");
+  await requireCurrentTerms(supabase, user.id, "/barn");
 
   const { error } = await supabase
     .from("children")
@@ -43,6 +45,7 @@ export async function deleteChild(formData: FormData): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
+  await requireCurrentTerms(supabase, user.id, "/barn");
   await supabase.from("children").delete().eq("id", id); // RLS sikrer at kun egne kan slettes
   revalidatePath("/barn");
 }

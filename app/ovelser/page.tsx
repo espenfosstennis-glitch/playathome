@@ -6,6 +6,7 @@ import OvelserView, { type Personal } from "@/components/OvelserView";
 import { getSkills, getExercises } from "@/lib/sanity/queries";
 import { createClient } from "@/lib/supabase/server";
 import { unlockedItems } from "@/lib/gamification";
+import { requireCurrentTerms } from "@/lib/terms";
 import { ACTIVE_CHILD_COOKIE } from "./constants";
 
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ async function loadPersonal(): Promise<{
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { loggedIn: false, childrenList: [], personal: null };
+  await requireCurrentTerms(supabase, user.id, "/ovelser");
 
   const { data } = await supabase
     .from("children")

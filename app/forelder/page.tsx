@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { buddyEmoji } from "@/lib/buddies";
 import { getSkills, getExercises } from "@/lib/sanity/queries";
 import { currentStreak, streakLabel } from "@/lib/streak";
+import { requireCurrentTerms } from "@/lib/terms";
 
 export const metadata: Metadata = {
   title: "Foreldreoversikt | Kids Tennis",
@@ -29,6 +30,7 @@ export default async function ForelderPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/logg-inn");
+  await requireCurrentTerms(supabase, user.id, "/forelder");
 
   const { data: childData } = await supabase
     .from("children")

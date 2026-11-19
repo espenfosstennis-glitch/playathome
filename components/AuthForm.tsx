@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Link from "next/link";
 import { signIn, signUp, type AuthState } from "@/app/logg-inn/actions";
 
 const initial: AuthState = {};
@@ -16,6 +17,12 @@ export default function AuthForm({ initialMode = "inn" }: { initialMode?: "inn" 
     <form action={formAction} className="auth-card">
       <h1>{mode === "inn" ? "Logg inn" : "Lag konto"}</h1>
       <p className="auth-sub">For foreldre. Her følger du barnets tennisreise.</p>
+      {mode === "ny" && (
+        <p className="auth-terms">
+          Du må godta{" "}
+          <Link href="/vilkar">vilkårene for bruk</Link> før du får tilgang til appen.
+        </p>
+      )}
 
       <label className="field">
         <span>E-post</span>
