@@ -16,8 +16,7 @@ const nunito = Nunito({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://playathome.no"),
-  // Privat forhåndsvisning: holdes ute av søkemotorer til ekte lansering.
-  robots: { index: false, follow: false },
+  robots: { index: true, follow: true },
   title: "Kids Tennis: tennistrening hjemme og på banen (3 til 5 år)",
   description:
     "Korte tennisøvelser dere gjør hjemme og på tennisbanen. Øvelsene henger sammen: det barnet lærer i stua, bruker det på banen. 100 øvelser, laget av tennistrener Espen Foss. Gratis i lanseringsperioden.",
