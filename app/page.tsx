@@ -12,9 +12,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "nb_NO",
-    title: "Kids Tennis: tennistrening hjemme for de minste",
+    title: "Kids Tennis: tennistrening hjemme og på banen for de minste",
     description:
-      "Korte øvelser dere gjør hjemme, uten bane. 100 øvelser laget av Espen Foss. Gratis i lanseringsperioden.",
+      "Korte øvelser dere gjør hjemme og på tennisbanen. 100 øvelser laget av Espen Foss. Gratis i lanseringsperioden.",
     url: "https://playathome.no/",
   },
 };
@@ -28,14 +28,14 @@ const appJsonLd = {
   inLanguage: "nb-NO",
   offers: { "@type": "Offer", price: "0", priceCurrency: "NOK" },
   description:
-    "Tennistrening hjemme for barn 3 til 5 år. 100 korte øvelser i 10 ferdigheter, laget av Espen Foss.",
+    "Tennistrening hjemme og på tennisbanen for barn 3 til 5 år. 100 korte øvelser i 10 ferdigheter, laget av Espen Foss.",
   author: { "@type": "Person", name: "Espen Foss", jobTitle: "Tennistrener" },
 };
 
 const faq = [
   {
     q: "Trenger vi tennisbane eller utstyr?",
-    a: "Nei. En myk ball og litt plass i stua eller hagen er alt dere trenger. Racket er fint, men ikke nødvendig for å komme i gang.",
+    a: "Nei. En myk ball og litt plass i stua eller hagen holder. Har dere en tennisbane i nærheten, finnes det øvelser for den også.",
   },
   {
     q: "Hvor gammelt bør barnet være?",
@@ -91,11 +91,10 @@ export default async function Home() {
             <div>
               <span className="eyebrow">Tennis for de minste · 3 til 5 år</span>
               <h1>
-                Tennistrening hjemme <span className="hl">som føles som lek</span>
+                Tennistrening hjemme <span className="hl">og på banen</span>
               </h1>
               <p className="lead">
-                Korte øvelser dere gjør i stua eller hagen. Ingen bane og ingen påmelding, bare
-                deg, barnet og ballen.
+                Korte øvelser dere gjør i stua, i hagen eller på tennisbanen.
               </p>
               <div className="hero-cta">
                 <Link href="/ovelser" className="btn btn-primary">
@@ -178,13 +177,13 @@ export default async function Home() {
               <span className="num">01</span>
               <div className="em">🎯</div>
               <h3>Velg dagens øvelse</h3>
-              <p>Appen foreslår én øvelse tilpasset barnets nivå.</p>
+              <p>Appen foreslår en øvelse tilpasset barnets nivå.</p>
             </div>
             <div className="step">
               <span className="num">02</span>
               <div className="em">🤸</div>
               <h3>Gjør den sammen</h3>
-              <p>En kort video viser leken. Dere gjør den på 2 til 5 minutter, inne eller ute.</p>
+              <p>En kort video viser leken. Dere gjør den på 2 til 5 minutter, hjemme eller på banen.</p>
             </div>
             <div className="step">
               <span className="num">03</span>
@@ -194,6 +193,31 @@ export default async function Home() {
                 Når øvelsen er gjort, samler barnet tennisballer og stiger fra nybegynner til
                 tennisstjerne.
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Home and court */}
+        <section id="banen" className="wrap section" style={{ paddingTop: 0 }}>
+          <div className="sec-head center">
+            <span className="eyebrow">Hjemme og på banen</span>
+            <h2>Samme ferdigheter, to steder</h2>
+          </div>
+          <div className="steps">
+            <div className="step">
+              <div className="em">🏠</div>
+              <h3>Hjemme</h3>
+              <p>Dere trenger 2 til 5 minutter om dagen og en myk ball.</p>
+            </div>
+            <div className="step">
+              <div className="em">🎾</div>
+              <h3>På banen</h3>
+              <p>Øvelser for tennisbanen, med racket, nett og mer plass.</p>
+            </div>
+            <div className="step">
+              <div className="em">🔗</div>
+              <h3>Henger sammen</h3>
+              <p>Det barnet lærer i stua, tar dere med ut på banen.</p>
             </div>
           </div>
         </section>
