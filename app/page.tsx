@@ -84,9 +84,12 @@ export default async function Home() {
       </a>
       <SiteHeader />
 
-      <main id="top" tabIndex={-1}>
+      <main id="top" tabIndex={-1} className="landing">
         {/* Hero */}
         <section className="hero">
+          <span className="fball f1" aria-hidden="true" />
+          <span className="fball f2" aria-hidden="true" />
+          <span className="fball f3" aria-hidden="true" />
           <div className="wrap hero-grid">
             <div>
               <span className="eyebrow">Tennis for de minste · 3 til 5 år</span>
@@ -143,6 +146,10 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        <svg className="wave" viewBox="0 0 1440 48" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 0h1440v14c-180 30-360 34-540 18S540 0 360 10 120 40 0 30z" fill="currentColor" />
+        </svg>
 
         {/* Trust strip */}
         <div className="trust">
@@ -329,6 +336,8 @@ export default async function Home() {
         {/* CTA */}
         <section className="wrap section">
           <div className="cta-band">
+            <span className="fball f1" aria-hidden="true" />
+            <span className="fball f3" aria-hidden="true" />
             <h2>Begynn tennisreisen til barnet ditt</h2>
             <p>Start med de første øvelsene i dag. Gratis for alle i lanseringsperioden.</p>
             <Link href="/ovelser" className="btn btn-primary">
