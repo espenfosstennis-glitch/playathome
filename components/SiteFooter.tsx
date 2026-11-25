@@ -14,7 +14,7 @@ export default function SiteFooter() {
               Kids Tennis
             </span>
             <p style={{ opacity: 0.85, marginTop: 12, maxWidth: "34ch", fontWeight: 600 }}>
-              Tennistrening hjemme for barn 3 til 5 år. Laget av Espen Foss.
+              Tennistrening hjemme og på banen for barn 3 til 5 år. Laget av Espen Foss.
             </p>
           </div>
           <nav aria-label="Sidekart">

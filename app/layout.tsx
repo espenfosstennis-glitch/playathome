@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://playathome.no"),
   // Privat forhåndsvisning: holdes ute av søkemotorer til ekte lansering.
   robots: { index: false, follow: false },
-  title: "Kids Tennis: tennistrening hjemme for de minste (3 til 5 år)",
+  title: "Kids Tennis: tennistrening hjemme og på banen (3 til 5 år)",
   description:
-    "Korte tennisøvelser dere gjør hjemme i stua eller hagen, uten bane. 100 øvelser, 10 ferdigheter, laget av tennistrener Espen Foss. Gratis i lanseringsperioden.",
+    "Korte tennisøvelser dere gjør hjemme og på tennisbanen. Øvelsene henger sammen: det barnet lærer i stua, bruker det på banen. 100 øvelser, laget av tennistrener Espen Foss. Gratis i lanseringsperioden.",
 };
 
 export default function RootLayout({

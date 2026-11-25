@@ -97,7 +97,8 @@ export default async function Home() {
                 Tennistrening hjemme <span className="hl">og på banen</span>
               </h1>
               <p className="lead">
-                Korte øvelser dere gjør i stua, i hagen eller på tennisbanen.
+                Korte øvelser dere gjør i stua, i hagen eller på tennisbanen. Det barnet øver på
+                hjemme, bruker det på banen.
               </p>
               <div className="hero-cta">
                 <Link href="/ovelser" className="btn btn-primary">
